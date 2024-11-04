@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role // Enum for defining role as Employee or Manager
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  projects         Project[] @relation("ManagerProjects")
+  employeeProjects Project[] @relation("EmployeeProjects") // Many-to-many relation with projects
+  tasks            Task[]    @relation("EmployeeTasks")
+}
+
+enum Role {
+  EMPLOYEE
+  MANAGER
+}
+
+model Project {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String
+  startDate   DateTime
+  endDate     DateTime
+  status      ProjectStatus
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  manager   User   @relation("ManagerProjects", fields: [managerId], references: [id])
+  managerId Int
+  employees User[] @relation("EmployeeProjects") // Many-to-many relation with employees
+  tasks     Task[] // One-to-many relation with tasks
+}
+
+enum ProjectStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+model Task {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  status      TaskStatus
+  startDate   DateTime
+  endDate     DateTime
+  priority    TaskPriority
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  project    Project @relation(fields: [projectId], references: [id])
+  projectId  Int
+  employee   User    @relation("EmployeeTasks", fields: [employeeId], references: [id])
+  employeeId Int
+}
+
+enum TaskStatus {
+  PENDING
+  ONGOING
+  COMPLETED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+
