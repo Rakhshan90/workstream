@@ -5,11 +5,15 @@ import { viewEmployeeProjects, viewManagerProjects } from '@/actions/project-boa
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { getUserRole } from '@/actions/user/index';
+import { redirect } from 'next/navigation';
 
 
 const page = async () => {
 
     const session = await getServerSession(authOptions);
+    if(!session?.user?.id){
+        redirect('/signin');
+    }
     const role = await getUserRole(Number(session?.user?.id));
     let projects;
     if (role === 'MANAGER') {

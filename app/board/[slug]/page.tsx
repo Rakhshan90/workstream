@@ -3,7 +3,6 @@ import TaskList from "@/components/task-list";
 import { getUserRole } from "@/actions/user/index";
 import { getServerSession } from "next-auth";
 
-
 export default async function Page({ params, }: { params: Promise<{ slug: string }> }) {
 
     const session = await getServerSession(authOptions);
