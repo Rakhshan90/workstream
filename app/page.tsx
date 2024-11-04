@@ -1,7 +1,6 @@
 import { getUserRole } from "@/actions/user/index";
 import AppBar from "@/components/appbar";
 import LandingPage from "@/components/landing-page";
-import { Button } from "@/components/ui/button";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 
